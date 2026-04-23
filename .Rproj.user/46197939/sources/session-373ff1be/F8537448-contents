@@ -1,0 +1,121 @@
+---
+title: "Final_project"
+author: "JOSEPH"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+
+Objective: This project examines the relationship between county-level poverty and educational attainment.  
+The analysis uses a derived dataset and focuses on three variables:
+poverty rate, high school attainment, and bachelor's degree attainment
+
+
+# Installing required packages
+
+```{r setup, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(here)
+```
+# Load data
+```{r}
+here::i_am("Final_project.Rmd")
+
+```
+
+```{r}
+data <- readRDS(here::here("data", "merged_clean.RDS"))
+
+# keep only selected variables and first 200 rows
+project_data <- data %>%
+  select(
+    county,
+    pct_population_below_poverty,
+    pct_adults_25plus_hs_or_higher,
+    pct_adults_25plus_bachelors_or_higher
+  ) %>%
+  slice_head(n = 200)
+
+head(project_data)
+```
+
+
+# Table 1:  Descriptive summary
+
+```{r}
+
+summary_table <- project_data %>%
+  summarise(
+    mean_poverty = mean(pct_population_below_poverty, na.rm = TRUE),
+    sd_poverty = sd(pct_population_below_poverty, na.rm = TRUE),
+    mean_hs = mean(pct_adults_25plus_hs_or_higher, na.rm = TRUE),
+    sd_hs = sd(pct_adults_25plus_hs_or_higher, na.rm = TRUE),
+    mean_bachelors = mean(pct_adults_25plus_bachelors_or_higher, na.rm = TRUE),
+    sd_bachelors = sd(pct_adults_25plus_bachelors_or_higher, na.rm = TRUE)
+  )
+
+kable(summary_table, digits = 2, caption = "Descriptive Statistics")
+
+```
+
+
+# Scatterplot: Poverty and High School Attainment
+
+```{r}
+
+ggplot(project_data, aes(x = pct_population_below_poverty,
+                         y = pct_adults_25plus_hs_or_higher)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Poverty and High School Attainment",
+    x = "Population Below Poverty (%)",
+    y = "Adults 25+ with High School or Higher (%)"
+  ) +
+  theme_minimal()
+```
+
+
+# Scatterplot: Poverty and Bachelor's Attainment
+```{r}
+
+ggplot(project_data, aes(x = pct_population_below_poverty,
+                         y = pct_adults_25plus_bachelors_or_higher)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Poverty and Bachelor's Degree Attainment",
+    x = "Population Below Poverty (%)",
+    y = "Adults 25+ with Bachelor's Degree or Higher (%)"
+  ) +
+  theme_minimal()
+```
+
+
+# Regression: Poverty and High School Attainment
+
+```{r}
+
+model_hs <- lm(
+  pct_adults_25plus_hs_or_higher ~ pct_population_below_poverty,
+  data = project_data
+)
+
+summary(model_hs)
+```
+
+
+# Regression: Poverty and Bachelor's Degree Attainment
+```{r}
+
+model_bachelors <- lm(
+  pct_adults_25plus_bachelors_or_higher ~ pct_population_below_poverty,
+  data = project_data
+)
+
+summary(model_bachelors)
+```
+

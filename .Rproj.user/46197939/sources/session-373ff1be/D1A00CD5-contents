@@ -1,0 +1,26 @@
+# Final Project 8
+
+## Project Overview
+
+This project builds a containerized R Markdown report using Docker.  
+The report is generated automatically from the project files and saved to a local folder.
+
+---
+
+## Files
+
+- `Dockerfile` – defines the Docker image
+- `Makefile` – shortcuts for building image and generating report
+- `report.Rmd` – source report
+- `code/` – analysis scripts
+- `data/` – input data
+- `report/` – generated output report
+
+---
+
+## How to Build the Docker Image
+
+To build the Docker image, run:
+
+```bash
+make build

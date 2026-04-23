@@ -1,0 +1,61 @@
+---
+title: "report"
+author: "JOSEPH"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Objective: This project examines the relationship between county-level poverty and educational attainment.  
+The analysis uses a derived dataset and focuses on three variables:
+poverty rate, high school attainment, and bachelor's degree attainment
+
+
+# Installing required packages
+
+```{r setup, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(here)
+```
+# Load data
+```{r}
+here::i_am("report.Rmd")
+
+```
+
+```{r}
+data <- readRDS(here::here("data", "merged_clean.RDS"))
+
+# keep only selected variables and first 200 rows
+project_data <- data %>%
+  select(
+    county,
+    pct_population_below_poverty,
+    pct_adults_25plus_hs_or_higher,
+    pct_adults_25plus_bachelors_or_higher
+  ) %>%
+  slice_head(n = 200)
+
+head(project_data)
+```
+
+
+
+# Scatterplot: Poverty and High School Attainment
+
+```{r}
+
+ggplot(project_data, aes(x = pct_population_below_poverty,
+                         y = pct_adults_25plus_hs_or_higher)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Poverty and High School Attainment",
+    x = "Population Below Poverty (%)",
+    y = "Adults 25+ with High School or Higher (%)"
+  ) +
+  theme_minimal()
+```
+
+
