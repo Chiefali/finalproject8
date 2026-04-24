@@ -13,3 +13,10 @@ https://hub.docker.com/r/jdali/finalproject8
 
 ```bash
 docker build -t jdali/finalproject8 .
+```
+
+## Build report in container
+
+```bash
+make docker_report
+```
